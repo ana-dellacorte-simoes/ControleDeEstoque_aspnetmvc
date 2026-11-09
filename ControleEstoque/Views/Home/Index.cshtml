@@ -1,0 +1,61 @@
+@model DashboardViewModel
+@{ ViewData["Title"] = "Visão geral"; }
+@functions { static string P(double v) => v.ToString("0.#", CultureInfo.InvariantCulture); }
+
+<div class="page-head">
+    <div><h1>Visão geral</h1><p class="muted">Indicadores consolidados de @Model.TotalProdutos produto(s) ativos.</p></div>
+    <form method="get" asp-controller="Produtos" asp-action="Index" class="search">
+        <svg><use href="#i-search"/></svg>
+        <input type="search" name="q" placeholder="Buscar produto" maxlength="100" aria-label="Buscar produto" />
+        <button type="submit" class="btn btn-dark btn-sm">Buscar</button>
+    </form>
+</div>
+
+<section class="kpis">
+    <article class="kpi"><span class="kpi-label">Estoque total</span><strong class="kpi-value">@Model.Total.ToString("N0")</strong><span class="kpi-foot">unidades físicas</span></article>
+    <article class="kpi kpi-ok"><span class="kpi-label">Disponível</span><strong class="kpi-value">@Model.Disponivel.ToString("N0")</strong><span class="kpi-foot">@P(Model.Pct(Model.Disponivel))% do total</span></article>
+    <article class="kpi kpi-info"><span class="kpi-label">Reservado</span><strong class="kpi-value">@Model.Reservado.ToString("N0")</strong><span class="kpi-foot">@P(Model.Pct(Model.Reservado))% do total</span></article>
+    <article class="kpi kpi-warn"><span class="kpi-label">Bloqueado</span><strong class="kpi-value">@Model.Bloqueado.ToString("N0")</strong><span class="kpi-foot">@P(Model.Pct(Model.Bloqueado))% do total</span></article>
+</section>
+
+<section class="card">
+    <div class="card-head"><h2>Distribuição do estoque</h2>
+        <div class="legend"><span class="dot dot-ok"></span>Disponível <span class="dot dot-info"></span>Reservado <span class="dot dot-warn"></span>Bloqueado</div></div>
+    <div class="stack" role="img" aria-label="Distribuição entre disponível, reservado e bloqueado">
+        <span class="seg seg-ok" data-pct="@P(Model.Pct(Model.Disponivel))"></span>
+        <span class="seg seg-info" data-pct="@P(Model.Pct(Model.Reservado))"></span>
+        <span class="seg seg-warn" data-pct="@P(Model.Pct(Model.Bloqueado))"></span>
+    </div>
+</section>
+
+<div class="grid-2">
+    <section class="card">
+        <div class="card-head"><h2>Produtos em atenção</h2><a class="link" asp-controller="Produtos" asp-action="Index">Ver todos</a></div>
+        @if (Model.Atencao.Count == 0) { <p class="muted">Nenhum produto cadastrado.</p> }
+        else
+        {
+            <ul class="list">
+            @foreach (var p in Model.Atencao)
+            {
+                <li><div><strong>@p.Nome</strong><small class="muted">Total @p.QuantidadeTotal · Res. @p.QuantidadeReservada · Bloq. @p.QuantidadeBloqueada</small></div>
+                    <span class="badge @(p.QuantidadeDisponivel == 0 ? "badge-danger" : "badge-ok")">@p.QuantidadeDisponivel disp.</span></li>
+            }
+            </ul>
+        }
+    </section>
+
+    <section class="card">
+        <div class="card-head"><h2>Últimas movimentações</h2></div>
+        @if (Model.Recentes.Count == 0) { <p class="muted">Sem movimentações ainda.</p> }
+        else
+        {
+            <ul class="list">
+            @foreach (var m in Model.Recentes)
+            {
+                <li><div><strong>@m.ProdutoNome</strong><small class="muted">@m.Rotulo · @m.DataCriacao.ToLocalTime().ToString("dd/MM HH:mm")@(string.IsNullOrEmpty(m.Referencia) ? "" : " · " + m.Referencia)</small></div>
+                    <span class="badge badge-@m.Classe">@m.Quantidade</span></li>
+            }
+            </ul>
+        }
+    </section>
+</div>

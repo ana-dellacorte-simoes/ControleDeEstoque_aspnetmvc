@@ -1,0 +1,54 @@
+@model ListaReservasViewModel
+@{ ViewData["Title"] = "Reservas"; }
+
+<div class="page-head">
+    <div><h1>Reservas</h1><p class="muted">@(Model.Historico ? "Exibindo ativas e histórico." : "Exibindo reservas ativas.")</p></div>
+    <div class="head-actions">
+        <form method="get" class="search">
+            <svg><use href="#i-search"/></svg>
+            <input type="search" name="q" value="@Model.Busca" placeholder="Produto ou solicitação" maxlength="100" aria-label="Buscar reserva" />
+            <input type="hidden" name="historico" value="@(Model.Historico ? "true" : "false")" />
+            <button type="submit" class="btn btn-dark btn-sm">Buscar</button>
+        </form>
+        <a class="btn btn-ghost" asp-action="Index" asp-route-q="@Model.Busca" asp-route-historico="@(!Model.Historico)">@(Model.Historico ? "Só ativas" : "Ver histórico")</a>
+        <a class="btn btn-primary" asp-action="Criar"><svg><use href="#i-plus"/></svg>Adicionar reserva</a>
+    </div>
+</div>
+
+<div class="card flush">
+@if (Model.Itens.Count == 0)
+{
+    <div class="empty-state"><h3>Nenhuma reserva encontrada</h3></div>
+}
+else
+{
+    <div class="table-wrap">
+    <table class="table">
+        <thead><tr><th data-sort="num">Reserva</th><th data-sort="text">Produto</th><th data-sort="text">Solicitação</th><th class="num" data-sort="num">Qtd.</th><th data-sort="text">Data</th><th data-sort="text">Situação</th><th class="actions-col">Ação</th></tr></thead>
+        <tbody>
+        @foreach (var r in Model.Itens)
+        {
+            <tr>
+                <td data-label="Reserva" data-sort-value="@r.IdReserva"><strong>#@r.IdReserva</strong></td>
+                <td data-label="Produto">@r.ProdutoNome</td>
+                <td data-label="Solicitação">@r.SolicitacaoId</td>
+                <td class="num" data-label="Qtd.">@r.Quantidade</td>
+                <td data-label="Data" data-sort-value="@r.DataCriacao.ToString("yyyyMMddHHmmss")">@r.DataCriacao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                <td data-label="Situação">
+                    @if (r.Ativa) { <span class="badge badge-info">Ativa</span> }
+                    else { <span class="badge badge-muted">@(r.Desfecho ?? "Liberada")@(r.DataLiberacao is { } d ? " · " + d.ToLocalTime().ToString("dd/MM HH:mm") : "")</span> }
+                </td>
+                <td class="actions-col">
+                    @if (r.Ativa)
+                    {
+                        <button type="button" class="btn btn-ghost btn-sm" data-liberar="@r.IdReserva" data-desc="@r.ProdutoNome · @r.Quantidade un. · @r.SolicitacaoId"><svg><use href="#i-release"/></svg>Liberar</button>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    </div>
+}
+</div>
+<partial name="_DialogLiberar" model='("Reservas", "reserva")' />

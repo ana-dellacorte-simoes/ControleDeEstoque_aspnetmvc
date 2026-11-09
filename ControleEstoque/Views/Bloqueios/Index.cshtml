@@ -1,0 +1,54 @@
+@model ListaBloqueiosViewModel
+@{ ViewData["Title"] = "Bloqueios"; }
+
+<div class="page-head">
+    <div><h1>Bloqueios</h1><p class="muted">@(Model.Historico ? "Exibindo ativos e histórico." : "Exibindo bloqueios ativos.")</p></div>
+    <div class="head-actions">
+        <form method="get" class="search">
+            <svg><use href="#i-search"/></svg>
+            <input type="search" name="q" value="@Model.Busca" placeholder="Produto ou motivo" maxlength="100" aria-label="Buscar bloqueio" />
+            <input type="hidden" name="historico" value="@(Model.Historico ? "true" : "false")" />
+            <button type="submit" class="btn btn-dark btn-sm">Buscar</button>
+        </form>
+        <a class="btn btn-ghost" asp-action="Index" asp-route-q="@Model.Busca" asp-route-historico="@(!Model.Historico)">@(Model.Historico ? "Só ativos" : "Ver histórico")</a>
+        <a class="btn btn-primary" asp-action="Criar"><svg><use href="#i-plus"/></svg>Adicionar bloqueio</a>
+    </div>
+</div>
+
+<div class="card flush">
+@if (Model.Itens.Count == 0)
+{
+    <div class="empty-state"><h3>Nenhum bloqueio encontrado</h3></div>
+}
+else
+{
+    <div class="table-wrap">
+    <table class="table">
+        <thead><tr><th data-sort="num">Bloqueio</th><th data-sort="text">Produto</th><th class="num" data-sort="num">Qtd.</th><th data-sort="text">Motivo</th><th data-sort="text">Data</th><th data-sort="text">Situação</th><th class="actions-col">Ação</th></tr></thead>
+        <tbody>
+        @foreach (var b in Model.Itens)
+        {
+            <tr>
+                <td data-label="Bloqueio" data-sort-value="@b.IdBloqueio"><strong>#@b.IdBloqueio</strong></td>
+                <td data-label="Produto">@b.ProdutoNome</td>
+                <td class="num" data-label="Qtd.">@b.Quantidade</td>
+                <td data-label="Motivo">@(string.IsNullOrWhiteSpace(b.Motivo) ? "—" : b.Motivo)</td>
+                <td data-label="Data" data-sort-value="@b.DataCriacao.ToString("yyyyMMddHHmmss")">@b.DataCriacao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                <td data-label="Situação">
+                    @if (b.Ativo) { <span class="badge badge-warn">Ativo</span> }
+                    else { <span class="badge badge-muted">@(b.Desfecho ?? "Liberado")@(b.DataLiberacao is { } d ? " · " + d.ToLocalTime().ToString("dd/MM HH:mm") : "")</span> }
+                </td>
+                <td class="actions-col">
+                    @if (b.Ativo)
+                    {
+                        <button type="button" class="btn btn-ghost btn-sm" data-liberar="@b.IdBloqueio" data-desc="@b.ProdutoNome · @b.Quantidade un."><svg><use href="#i-release"/></svg>Liberar</button>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    </div>
+}
+</div>
+<partial name="_DialogLiberar" model='("Bloqueios", "bloqueio")' />

@@ -1,0 +1,25 @@
+@model ProdutoCadastroViewModel
+@{ ViewData["Title"] = "Adicionar produto"; }
+
+<div class="page-head"><div><h1>Adicionar tipo de produto</h1><p class="muted">O ID é gerado automaticamente.</p></div></div>
+
+<form asp-action="Cadastrar" method="post" class="card form-card" data-submit-once novalidate>
+    <div asp-validation-summary="ModelOnly" class="alert alert-erro"></div>
+
+    <div class="field">
+        <label asp-for="Nome">Nome</label>
+        <input asp-for="Nome" maxlength="100" autocomplete="off" required />
+        <span asp-validation-for="Nome" class="field-error"></span>
+    </div>
+    <div class="field">
+        <label asp-for="QuantidadeInicial">Quantidade inicial (disponível)</label>
+        <input asp-for="QuantidadeInicial" type="number" min="0" max="1000000" inputmode="numeric" required />
+        <span asp-validation-for="QuantidadeInicial" class="field-error"></span>
+    </div>
+    <div class="field"><label>ID</label><input value="Gerado automaticamente" disabled /></div>
+
+    <div class="form-actions">
+        <a class="btn btn-ghost" asp-action="Index">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Cadastrar produto</button>
+    </div>
+</form>

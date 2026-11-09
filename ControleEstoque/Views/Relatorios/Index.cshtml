@@ -1,0 +1,33 @@
+@{ ViewData["Title"] = "Relatórios"; }
+
+<div class="page-head">
+    <div><h1>Relatórios</h1><p class="muted">Baixe um PDF com a situação atual dos produtos e o histórico de movimentações.</p></div>
+</div>
+
+<div class="report">
+    <form method="get" asp-action="Pdf" class="card form-card">
+        <h2 class="card-head">Período das movimentações</h2>
+        <div class="field-row">
+            <div class="field"><label for="de">De</label><input id="de" name="de" type="date" /></div>
+            <div class="field"><label for="ate">Até</label><input id="ate" name="ate" type="date" /></div>
+        </div>
+        <p class="hint">Deixe em branco para incluir todo o histórico.</p>
+
+        <div class="field" >
+            <div class="check"><input id="incluirInativos" name="incluirInativos" type="checkbox" value="true" /><label for="incluirInativos">Incluir produtos inativos</label></div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><svg><use href="#i-download"/></svg>Baixar PDF</button>
+        </div>
+    </form>
+
+    <aside class="report-aside">
+        <h2>O que vem no arquivo</h2>
+        <ul>
+            <li>Resumo com total, disponível, reservado e bloqueado.</li>
+            <li>Todos os produtos com quantidades e situação.</li>
+            <li>Movimentações do período, da mais recente para a mais antiga.</li>
+        </ul>
+    </aside>
+</div>

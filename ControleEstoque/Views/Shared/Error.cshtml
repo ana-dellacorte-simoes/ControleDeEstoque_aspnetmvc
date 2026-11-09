@@ -1,0 +1,11 @@
+@model ErrorViewModel
+@{ ViewData["Title"] = "Algo deu errado"; }
+<div class="card empty-state">
+    <h2>Não foi possível concluir a operação</h2>
+    <p class="muted">Ocorreu um erro inesperado. Nenhuma alteração parcial foi gravada. Tente novamente; se persistir, informe o código abaixo ao suporte.</p>
+    @if (Model.ShowRequestId)
+    {
+        <p>Código: <code>@Model.RequestId</code></p>
+    }
+    <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Voltar ao início</a>
+</div>

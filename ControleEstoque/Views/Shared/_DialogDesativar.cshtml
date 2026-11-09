@@ -1,0 +1,12 @@
+<dialog class="dialog" id="dlg-desativar" data-dialog-desativar aria-labelledby="dlg-desativar-titulo">
+    <form method="post" asp-controller="Produtos" asp-action="Desativar">
+        <h3 id="dlg-desativar-titulo">Desativar produto <span data-dlg2-id></span></h3>
+        <p class="muted" data-dlg2-desc></p>
+        <p class="muted">O produto sai das listas de uso, mas seu histórico de movimentações é preservado. Esta ação pode ser revertida apenas no banco de dados.</p>
+        <input type="hidden" name="id" value="" data-dlg2-input />
+        <div class="dialog-actions">
+            <button type="button" class="btn btn-ghost" data-dlg2-cancel>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Confirmar desativação</button>
+        </div>
+    </form>
+</dialog>

@@ -1,0 +1,76 @@
+@model ListaEstoqueViewModel
+@{ ViewData["Title"] = "Produtos"; }
+
+<div class="page-head">
+    <div><h1>Produtos</h1><p class="muted">Situação atual do estoque por produto.</p></div>
+    <div class="head-actions">
+        <form method="get" class="search">
+            <svg><use href="#i-search"/></svg>
+            <input type="search" name="q" value="@Model.Busca" placeholder="Buscar produto" maxlength="100" aria-label="Buscar produto" />
+            <button type="submit" class="btn btn-dark btn-sm">Buscar</button>
+        </form>
+        <a class="btn btn-primary" asp-action="Cadastrar"><svg><use href="#i-plus"/></svg>Adicionar produto</a>
+        <a class="btn btn-ghost" asp-action="Entrada"><svg><use href="#i-in"/></svg>Entrada</a>
+        <a class="btn btn-ghost" asp-action="Saida"><svg><use href="#i-out"/></svg>Saída</a>
+        <a class="btn btn-ghost" asp-controller="Relatorios" asp-action="Pdf"><svg><use href="#i-download"/></svg>Baixar PDF</a>
+    </div>
+</div>
+
+<div class="card flush">
+@if (Model.Itens.Count == 0)
+{
+    <div class="empty-state"><h3>Nenhum produto encontrado</h3><p class="muted">Cadastre um produto para começar.</p></div>
+}
+else
+{
+    <div class="table-wrap">
+    <table class="table">
+        <thead><tr><th data-sort="text">Produto</th><th class="num" data-sort="num">Total</th><th class="num" data-sort="num">Disponível</th><th class="num" data-sort="num">Reservado</th><th class="num" data-sort="num">Bloqueado</th><th data-sort="text">Situação</th><th class="actions-col">Ações</th></tr></thead>
+        <tbody>
+        @foreach (var p in Model.Itens)
+        {
+            var baixo = p.QuantidadeTotal > 0 && p.QuantidadeDisponivel * 10 <= p.QuantidadeTotal;
+            <tr>
+                <td data-label="Produto" data-sort-value="@p.Nome"><strong>@p.Nome</strong><small class="muted">ID @p.Id</small></td>
+                <td class="num" data-label="Total">@p.QuantidadeTotal</td>
+                <td class="num" data-label="Disponível"><strong>@p.QuantidadeDisponivel</strong></td>
+                <td class="num" data-label="Reservado">@p.QuantidadeReservada</td>
+                <td class="num" data-label="Bloqueado">@p.QuantidadeBloqueada</td>
+                <td data-label="Situação">
+                    @if (!p.Ativo) { <span class="badge badge-muted">Inativo</span> }
+                    else if (p.QuantidadeDisponivel == 0) { <span class="badge badge-danger">Sem estoque disponível</span> }
+                    else if (baixo) { <span class="badge badge-warn">Baixo</span> }
+                    else { <span class="badge badge-ok">Normal</span> }
+                </td>
+                <td class="actions-col">
+                    @if (p.Ativo)
+                    {
+                        var podeDesativar = p.QuantidadeDisponivel == 0 && p.QuantidadeReservada == 0 && p.QuantidadeBloqueada == 0;
+                        <div class="row-actions">
+                            <a class="chip" asp-action="Entrada" asp-route-produtoId="@p.Id">Entrada</a>
+                            <a class="chip" asp-action="Saida" asp-route-produtoId="@p.Id">Saída</a>
+                            <a class="chip" asp-controller="Reservas" asp-action="Criar" asp-route-produtoId="@p.Id">Reservar</a>
+                            <a class="chip" asp-controller="Bloqueios" asp-action="Criar" asp-route-produtoId="@p.Id">Bloquear</a>
+                            @if (podeDesativar)
+                            {
+                                <button type="button" class="chip chip-danger" data-desativar="@p.Id" data-desc="@p.Nome · sem disponível, reservas ou bloqueios">Desativar</button>
+                            }
+                            else
+                            {
+                                <span class="chip chip-disabled" title="Só é possível desativar com disponível, reservado e bloqueado zerados">Desativar</span>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="muted">—</span>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    </div>
+}
+</div>
+<partial name="_DialogDesativar" />

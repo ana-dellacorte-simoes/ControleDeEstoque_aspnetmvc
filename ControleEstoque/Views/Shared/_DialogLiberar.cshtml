@@ -1,0 +1,16 @@
+@model (string Controller, string Rotulo)
+<dialog class="dialog" id="dlg-liberar" data-dialog-liberar aria-labelledby="dlg-titulo">
+    <form method="post" asp-controller="@Model.Controller" asp-action="Liberar">
+        <h3 id="dlg-titulo">Liberar @Model.Rotulo <span data-dlg-id></span></h3>
+        <p class="muted" data-dlg-desc></p>
+        <input type="hidden" name="id" value="" data-dlg-input />
+        <label class="radio-card"><input type="radio" name="acao" value="Devolver" checked />
+            <span><strong>Devolver ao estoque</strong><small>As unidades voltam a ficar disponíveis.</small></span></label>
+        <label class="radio-card"><input type="radio" name="acao" value="Retirar" />
+            <span><strong>Retirar</strong><small>As unidades saem definitivamente do estoque total.</small></span></label>
+        <div class="dialog-actions">
+            <button type="button" class="btn btn-ghost" data-dlg-cancel>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Confirmar</button>
+        </div>
+    </form>
+</dialog>

@@ -1,0 +1,26 @@
+@model MovimentoViewModel
+@{
+    var entrada = Model.Tipo == "Entrada";
+    ViewData["Title"] = entrada ? "Entrada de produto" : "Saída de produto";
+}
+
+<div class="page-head"><div><h1>@ViewData["Title"]</h1>
+    <p class="muted">@(entrada ? "Adicione qualquer quantidade positiva ao estoque." : "Somente quantidades disponíveis podem sair.")</p></div></div>
+
+<form asp-action="@Model.Tipo" method="post" class="card form-card" data-submit-once novalidate>
+    <div asp-validation-summary="ModelOnly" class="alert alert-erro"></div>
+    <partial name="_CampoProduto" model="(Model.Produtos, Model.ProdutoId, !entrada)" />
+
+    <div class="field">
+        <label for="Quantidade">Quantidade</label>
+        <input id="Quantidade" name="Quantidade" type="number" min="1" max="1000000" inputmode="numeric" data-quantidade
+               value="@(Model.Quantidade > 0 ? Model.Quantidade.ToString() : "")" required />
+        @Html.ValidationMessage("Quantidade", new { @class = "field-error" })
+        @if (!entrada) { <p class="hint" data-disp-hint>Selecione um produto para ver o disponível.</p> }
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-ghost" asp-action="Index">Cancelar</a>
+        <button type="submit" class="btn btn-primary">@(entrada ? "Registrar entrada" : "Registrar saída")</button>
+    </div>
+</form>

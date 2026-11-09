@@ -1,0 +1,14 @@
+@* Model: (List<EstoqueProduto> Produtos, int Selecionado, bool LimitarPorDisponivel) *@
+@model (List<EstoqueProduto> Produtos, int Selecionado, bool Limitar)
+<div class="field">
+    <label for="ProdutoId">Produto</label>
+    <select id="ProdutoId" name="ProdutoId" data-produto-select data-limitar="@(Model.Limitar ? "1" : "0")" required>
+        <option value="">Selecione…</option>
+        @foreach (var p in Model.Produtos)
+        {
+            <option value="@p.Id" data-disp="@p.QuantidadeDisponivel" selected="@(p.Id == Model.Selecionado)">@p.Nome</option>
+        }
+    </select>
+    @Html.ValidationMessage("ProdutoId", new { @class = "field-error" })
+    <p class="hint"><a asp-controller="Produtos" asp-action="Cadastrar">+ Adicionar novo produto</a></p>
+</div>

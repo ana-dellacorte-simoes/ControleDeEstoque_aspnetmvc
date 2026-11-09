@@ -1,0 +1,27 @@
+@model ReservaViewModel
+@{ ViewData["Title"] = "Adicionar reserva"; }
+
+<div class="page-head"><div><h1>Adicionar reserva</h1><p class="muted">Só é possível reservar até a quantidade disponível.</p></div></div>
+
+<form asp-action="Criar" method="post" class="card form-card" data-submit-once novalidate>
+    <div asp-validation-summary="ModelOnly" class="alert alert-erro"></div>
+    <partial name="_CampoProduto" model="(Model.Produtos, Model.ProdutoId, true)" />
+
+    <div class="field">
+        <label for="Quantidade">Quantidade</label>
+        <input id="Quantidade" name="Quantidade" type="number" min="1" inputmode="numeric" data-quantidade
+               value="@(Model.Quantidade > 0 ? Model.Quantidade.ToString() : "")" required />
+        @Html.ValidationMessage("Quantidade", new { @class = "field-error" })
+        <p class="hint" data-disp-hint>Selecione um produto para ver o disponível.</p>
+    </div>
+    <div class="field">
+        <label asp-for="SolicitacaoId">Solicitação / pedido</label>
+        <input asp-for="SolicitacaoId" maxlength="50" autocomplete="off" placeholder="Ex.: PED-1001" required />
+        <span asp-validation-for="SolicitacaoId" class="field-error"></span>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-ghost" asp-action="Index">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Confirmar reserva</button>
+    </div>
+</form>

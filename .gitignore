@@ -1,0 +1,27 @@
+# Compilação .NET
+bin/
+obj/
+.vs/
+*.user
+
+# Configurações locais e credenciais
+appsettings.*.local.json
+appsettings.Development.json
+secrets.json
+.env
+.env.*
+
+# Arquivos de testes
+TestResults/
+*.trx
+
+# Logs
+*.log
+
+# Banco de dados e backups
+*.bak
+*.mdf
+*.ldf
+
+# Arquivos compactados
+*.zip

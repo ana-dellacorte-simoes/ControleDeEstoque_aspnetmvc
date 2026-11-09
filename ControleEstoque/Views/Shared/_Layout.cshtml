@@ -1,0 +1,48 @@
+@{
+    var ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    string Ativo(string c) => string.Equals(ctrl, c, StringComparison.OrdinalIgnoreCase) ? "nav-item is-active" : "nav-item";
+}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>@ViewData["Title"] · Estoque</title>
+    <link rel="icon" href="~/favicon.ico" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_Icons" />
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <a class="brand" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark">E</span>
+                <span class="brand-text"><strong>Estoque</strong><small>Controle &amp; Análise</small></span>
+            </a>
+            <nav class="nav" aria-label="Principal">
+                <a class="@Ativo("Home")" asp-controller="Home" asp-action="Index"><svg><use href="#i-grid"/></svg>Geral</a>
+                <a class="@Ativo("Produtos")" asp-controller="Produtos" asp-action="Index"><svg><use href="#i-box"/></svg>Produtos</a>
+                <a class="@Ativo("Reservas")" asp-controller="Reservas" asp-action="Index"><svg><use href="#i-bookmark"/></svg>Reservas</a>
+                <a class="@Ativo("Bloqueios")" asp-controller="Bloqueios" asp-action="Index"><svg><use href="#i-lock"/></svg>Bloqueios</a>
+                <a class="@Ativo("Relatorios")" asp-controller="Relatorios" asp-action="Index"><svg><use href="#i-file"/></svg>Relatórios</a>
+            </nav>
+            <div class="sidebar-foot">Disponível = Total − Reservado − Bloqueado</div>
+        </aside>
+        <div class="scrim" data-menu-close></div>
+
+        <div class="main">
+            <header class="topbar">
+                <button type="button" class="icon-btn menu-btn" data-menu-toggle aria-label="Abrir menu"><svg><use href="#i-menu"/></svg></button>
+                <span class="topbar-title">@ViewData["Title"]</span>
+                <a class="btn btn-primary btn-sm" asp-controller="Produtos" asp-action="Entrada"><svg><use href="#i-plus"/></svg>Movimentar</a>
+            </header>
+            <main class="content">
+                <partial name="_Alertas" />
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>
